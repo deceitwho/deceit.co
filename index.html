@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DECEIT!</title>
+  <style>
+    body {
+      background-color: black;
+      color: grey;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      margin-top: 0;
+      font-size: 48px;
+      color: white;
+      text-align: center;
+    }
+    .search-container {
+      position: relative;
+      width: 50%;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .suggestions {
+      background-color: #333;
+      border-radius: 5px;
+      position: absolute;
+      width: 100%;
+      top: 40px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .suggestion {
+      padding: 10px;
+      cursor: pointer;
+      color: white;
+      border-bottom: 1px solid #444;
+    }
+    .suggestion:last-child {
+      border-bottom: none;
+    }
+    .suggestion:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <h1>DECEIT!</h1>
+  <div class="search-container">
+    <input type="text" id="searchBar" placeholder="Enter website here..." autocomplete="off">
+    <div id="suggestions" class="suggestions"></div>
+  </div>
+
+  <script>
+    const websites = [
+      'google.com',
+      'facebook.com',
+      'amazon.com',
+      'youtube.com',
+      'wikipedia.org',
+      'twitter.com',
+      'instagram.com',
+      'linkedin.com',
+      'netflix.com',
+      'reddit.com'
+    ];
+
+    const searchBar = document.getElementById('searchBar');
+    const suggestionsContainer = document.getElementById('suggestions');
+
+    searchBar.addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      suggestionsContainer.innerHTML = '';
+
+      if (query) {
+        const filteredWebsites = websites.filter(website => website.includes(query));
+
+        filteredWebsites.forEach(website => {
+          const suggestionItem = document.createElement('div');
+          suggestionItem.classList.add('suggestion');
+          suggestionItem.textContent = website;
+          suggestionItem.addEventListener('click', function() {
+            // Navigate to the results page with the selected website
+            window.location.href = `result.html?website=${website}`;
+          });
+          suggestionsContainer.appendChild(suggestionItem);
+        });
+      }
+    });
+
+    // Hide suggestions when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.search-container')) {
+        suggestionsContainer.innerHTML = '';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DECEIT! Result</title>
+  <style>
+    body {
+      background-color: black;
+      color: grey;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    .website-name {
+      color: white;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .button {
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 20px;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 18px;
+      width: 150px;
+      text-align: center;
+    }
+    #scam {
+      background-color: red;
+    }
+    #trusted {
+      background-color: green;
+    }
+    #results {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>DECEIT!</h1>
+  <div class="website-name" id="websiteName"></div>
+
+  <div class="buttons">
+    <button id="scam" class="button">Scam</button>
+    <button id="trusted" class="button">Trusted</button>
+
+    <div id="results">
+      <p>Scam: <span id="scamPercent">0</span>%</p>
+      <p>Trusted: <span id="trustedPercent">0</span>%</p>
+    </div>
+  </div>
+
+  <script>
+    // Get the website name from the URL query string
+    const params = new URLSearchParams(window.location.search);
+    const website = params.get('website');
+    document.getElementById('websiteName').textContent = website;
+
+    const scamPercent = document.getElementById('scamPercent');
+    const trustedPercent = document.getElementById('trustedPercent');
+    const scamButton = document.getElementById('scam');
+    const trustedButton = document.getElementById('trusted');
+
+    // Initialize votes from storage for the specific website
+    let scamVotes = 0;
+    let trustedVotes = 0;
+
+    // Load existing votes from localStorage
+    if (localStorage.getItem(`${website}_scamVotes`)) {
+      scamVotes = parseInt(localStorage.getItem(`${website}_scamVotes`));
+    }
+    if (localStorage.getItem(`${website}_trustedVotes`)) {
+      trustedVotes = parseInt(localStorage.getItem(`${website}_trustedVotes`));
+    }
+
+    // Check if the user has already voted for this website
+    const hasVoted = localStorage.getItem(`${website}_hasVoted`);
+    if (hasVoted) {
+      // Disable the buttons if the user has already voted
+      disableVoting();
+    }
+
+    // Update percentages on page load
+    updateResults();
+
+    scamButton.addEventListener('click', function() {
+      if (!hasVoted) {
+        scamVotes++;
+        localStorage.setItem(`${website}_scamVotes`, scamVotes);
+        localStorage.setItem(`${website}_hasVoted`, 'true');
+        updateResults();
+        disableVoting();
+      }
+    });
+
+    trustedButton.addEventListener('click', function() {
+      if (!hasVoted) {
+        trustedVotes++;
+        localStorage.setItem(`${website}_trustedVotes`, trustedVotes);
+        localStorage.setItem(`${website}_hasVoted`, 'true');
+        updateResults();
+        disableVoting();
+      }
+    });
+
+    function updateResults() {
+      const totalVotes = scamVotes + trustedVotes;
+      const scamPercentage = totalVotes > 0 ? ((scamVotes / totalVotes) * 100).toFixed(2) : 0;
+      const trustedPercentage = totalVotes > 0 ? ((trustedVotes / totalVotes) * 100).toFixed(2) : 0;
+
+      scamPercent.textContent = scamPercentage;
+      trustedPercent.textContent = trustedPercentage;
+    }
+
+    function disableVoting() {
+      scamButton.classList.add('disabled');
+      scamButton.disabled = true;
+      trustedButton.classList.add('disabled');
+      trustedButton.disabled = true;
+    }
+  </script>
+</body>
+</html>
